@@ -30,6 +30,9 @@ API_BASE_URL = "https://analytics.dugganusa.com/api/v1/search"
 PDF_BASE_URL = "https://www.justice.gov/epstein/files/"
 API_KEY_PATH = os.path.join(os.getcwd(), ".epstein_api_key")
 CACHE_PATH = os.path.join(os.getcwd(), ".epstein_cache.json")
+# The API returns 403 Forbidden for requests that use the default
+# python-requests User-Agent, so identify this project explicitly.
+USER_AGENT = "EpsteOut/1.0 (+https://github.com/cfinke/EpsteOut)"
 
 
 def load_cache():
@@ -123,7 +126,10 @@ def search_epstein_files(name, delay, api_key):
     quoted_name = f'"{name}"'
     encoded_name = urllib.parse.quote(quoted_name)
     url = f"{API_BASE_URL}?q={encoded_name}&indexes=epstein_files"
-    headers = {"Authorization": f"Bearer {api_key}"}
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "User-Agent": USER_AGENT,
+    }
 
     while True:
         try:
